@@ -1,0 +1,3 @@
+export const SET_COUNTER = "SET_COUNTER"
+export const MINUS_COUNTER = "MINUS_COUNTER"
+export const GET_COUNTER = "GET_COUNTER"
