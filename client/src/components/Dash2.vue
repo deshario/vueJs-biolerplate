@@ -41,22 +41,24 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
-    import { DEL_EMPLOYEE } from '../store/modules/employee/type'
+    import { mapGetters, mapActions } from 'vuex';
+    import { EDIT_EMPLOYEE, DEL_EMPLOYEE, FETCH_EMPLOYEES, GET_EMPLOYEES } from '../store/modules/employee/type'
     export default {
         name: 'employee-table', 
         data(){
             return {
                 editing: null
-                //employeesList : this.$store.getters.getLatestEmployees
             }
         },
         computed: {
             ...mapGetters({
-                employeesList: 'GET_EMPLOYEES',
+                employeesList: GET_EMPLOYEES
             })
         },
         methods:{
+            ...mapActions({
+                loadData: FETCH_EMPLOYEES
+            }),
             enableEdit(employee){
                 this.cachedEmployee = Object.assign({}, employee) // replace target with source
                 this.editing = employee.id
@@ -69,12 +71,17 @@
                 if(employee.name === '' || employee.email === '') return
                 console.log('edit employee',employee)
                 // this.$store.commit('editEmployee',employee)
+                // this.$store.dispatch(EDIT_EMPLOYEE,employee)
                 this.editing = null
             },
             deleteEmployee(employeeId){
                 this.$store.dispatch(DEL_EMPLOYEE,employeeId)
             },
         },
+        created(){
+            console.log('Loading Data from Dashboard')
+            this.loadData()
+        }
     }
 </script>
 

@@ -77,7 +77,7 @@ export default {
         }
     },
     methods: {
-         ...mapActions({
+        ...mapActions({
             increment: SET_COUNTER,
             decrement: MINUS_COUNTER,
             pushEmployee: ADD_EMPLOYEE

@@ -12,9 +12,9 @@
 
 <script>
 
-    import { mapGetters } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
     import { GET_COUNTER } from '../store/modules/counter/type'
-    import { GET_EMPLOYEES, DEL_EMPLOYEE } from '../store/modules/employee/type'
+    import { GET_EMPLOYEES, DEL_EMPLOYEE, FETCH_EMPLOYEES } from '../store/modules/employee/type'
 
     const tableColumns = [
         {
@@ -64,9 +64,16 @@
             }
         },
         methods:{
+            ...mapActions({
+                loadData:FETCH_EMPLOYEES
+            }),
             deleteEmployee(employeeID){
                 this.$store.dispatch(DEL_EMPLOYEE,employeeID)
             }
+        },
+        created(){
+            console.log('Loading Data from Employee')
+            this.loadData()
         }
     }
 </script>

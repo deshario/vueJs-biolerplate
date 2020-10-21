@@ -1,12 +1,8 @@
-import {GET_EMPLOYEES, ADD_EMPLOYEE, DEL_EMPLOYEE} from './type'
+import {GET_EMPLOYEES, ADD_EMPLOYEE, DEL_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEES, SET_EMPLOYEES } from './type'
 
 export const employee = {
     state:{
-        employees: [
-            { id:1, name:'User1', email:'user1@mail.com' },
-            { id:2, name:'User2', email:'user2@mail.com' },
-            { id:3, name:'User3', email:'user3@mail.com' }
-        ]
+        employees: []
     },
     getters:{
         [GET_EMPLOYEES]: state => {
@@ -21,6 +17,9 @@ export const employee = {
         }
     },
     mutations:{
+        [SET_EMPLOYEES]: (state,dataset) => {
+            state.employees = dataset
+        },
         [ADD_EMPLOYEE]:(state,newEmployee) => {
             state.employees = [...state.employees, newEmployee]
         },
@@ -36,6 +35,27 @@ export const employee = {
         },
     },
     actions:{
+        [FETCH_EMPLOYEES]: ({commit, getters}) => {
+            const totalEmployees = getters.GET_EMPLOYEES;
+            if(totalEmployees.length <= 0){
+                fetch('https://jsonplaceholder.typicode.com/users/')
+                .then(response => {
+                    return response.json()
+                }).then(jsonOnj => {
+                    const employees = jsonOnj.map(e => {
+                        return {
+                        key: e.id.toString(),
+                        id: e.id,
+                        name: e.name,
+                        email: e.email
+                        }
+                    })
+                    commit(SET_EMPLOYEES,employees)
+                }).catch(err => console.log(err))
+            }else{
+                console.log('Data already loaded')
+            }
+        },
         [ADD_EMPLOYEE]: (context,employee) => {
             const newEmployee = {
                 id:employee.id,
@@ -50,6 +70,9 @@ export const employee = {
             if(employeeIndex != -1){
                 commit(DEL_EMPLOYEE,employeeIndex)
             }
+        },
+        [EDIT_EMPLOYEE]: ({commit, getters},employee) => {
+            console.log('Ready To Edit : ',employee)
         }
     }
 }
