@@ -23,12 +23,11 @@ const getUsers = async (request, response) => {
 
 const getSingleUser = async (request, response) => {
     const userId = request.params.id;
-    const isValidObjectId = mongoose.Types.ObjectId.isValid(userId)
-    if(isValidObjectId){
+    try {
         const singleUser = await User.findOne({ _id: userId})
         response.status(200).json(singleUser)
-    }else{
-        response.send('Invalid User ID')
+    }catch(error){
+        response.status(400).json(error)
     }
 }
 
