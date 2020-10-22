@@ -83,13 +83,7 @@ export default {
             pushEmployee: ADD_EMPLOYEE
         }),
         addEmployee(employee){
-            const totalEmployees = this.employeesList
-            const lastIndex = totalEmployees.length - 1;
-            const lastId = totalEmployees.length > 0 ? totalEmployees[lastIndex].id : 0;
-            const id = lastId + 1;
-            const newEmployee = {...employee, id}
-            //this.$store.dispatch('ADD_EMPLOYEE',newEmployee)
-            this.pushEmployee(newEmployee)
+            this.pushEmployee(employee)
         },
         handleSubmit(){
             this.submitting = true
@@ -98,7 +92,6 @@ export default {
                 this.error = true
                 return
             }
-            // this.$emit('add-employee',this.employee)
             this.addEmployee(this.employee)
             this.$refs.first.focus()
             this.employee = {name: '',email: ''}

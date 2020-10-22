@@ -79,7 +79,6 @@
             },
         },
         created(){
-            console.log('Loading Data from Dashboard')
             this.loadData()
         }
     }

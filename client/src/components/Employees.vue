@@ -12,18 +12,19 @@
 
 <script>
 
+    import Api from '../services/Api'
     import { mapGetters, mapActions } from 'vuex';
     import { GET_COUNTER } from '../store/modules/counter/type'
     import { GET_EMPLOYEES, DEL_EMPLOYEE, FETCH_EMPLOYEES } from '../store/modules/employee/type'
 
     const tableColumns = [
-        {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: 80,
-            align: 'center'
-        },
+        // {
+        //     title: 'ID',
+        //     dataIndex: 'id',
+        //     key: 'id',
+        //     width: 80,
+        //     align: 'center'
+        // },
         {
             title: 'Name',
             dataIndex: 'name',
@@ -72,7 +73,6 @@
             }
         },
         created(){
-            console.log('Loading Data from Employee')
             this.loadData()
         }
     }

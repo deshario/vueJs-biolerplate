@@ -1,21 +1,18 @@
 const express = require('express');
-const path = require('path');
+const createConnection = require('./config/connection')
+const cors = require('cors')
 
-(async () => {
-    const app = express();
-    const serverRoutes = require('./api/routes')
-    const port = process.env.PORT || 9000;
-    app.use(express.urlencoded({ extended: true })); // Body Parser
-    app.use(express.json()); // Body Parser
-    app.use(serverRoutes); // Apply Routes
-    
-    // app.get('*', (req, res) => handle(req, res));
+const app = express();
+const serverRoutes = require('./api/routes')
+const port = process.env.PORT || 8081;
+app.use(cors())
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(serverRoutes);
 
-    app.use(express.static(path.join(__dirname,'../client/index.html')));
-    
-    app.listen(port, (err) => {
-        if (err) throw err
-        console.log(`> 🚀 Ready on http://localhost:${port} <`)
-    });
+createConnection()
 
-})();
+app.listen(port, (err) => {
+    if (err) throw err
+    console.log(`> 🚀 Ready on http://localhost:${port}`)
+});

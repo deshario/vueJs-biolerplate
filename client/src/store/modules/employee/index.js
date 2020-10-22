@@ -1,4 +1,5 @@
-import {GET_EMPLOYEES, ADD_EMPLOYEE, DEL_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEES, SET_EMPLOYEES } from './type'
+import {GET_EMPLOYEES, ADD_EMPLOYEE, DEL_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEES, SET_EMPLOYEES, FORCE_FETCH_EMPLOYEES} from './type'
+import Api from '../../../services/Api'
 
 export const employee = {
     state:{
@@ -8,7 +9,7 @@ export const employee = {
         [GET_EMPLOYEES]: state => {
             return state.employees.map(e => {
               return {
-                key: e.id.toString(),
+                key: `${e.id}`,
                 id: e.id,
                 name: e.name,
                 email: e.email
@@ -35,40 +36,45 @@ export const employee = {
         },
     },
     actions:{
-        [FETCH_EMPLOYEES]: ({commit, getters}) => {
+        [FORCE_FETCH_EMPLOYEES]: async ({commit}) => {
+            const results = await Api().get('users')
+            const usersList = results.data.map(e => {
+                return {
+                    key: `${e._id}`,
+                    id: e._id,
+                    name: e.name || '',
+                    email: e.email || ''
+                }
+            })
+            commit(SET_EMPLOYEES,usersList)
+        },
+        [FETCH_EMPLOYEES]: async ({getters, dispatch}) => {
             const totalEmployees = getters.GET_EMPLOYEES;
             if(totalEmployees.length <= 0){
-                fetch('https://jsonplaceholder.typicode.com/users/')
-                .then(response => {
-                    return response.json()
-                }).then(jsonOnj => {
-                    const employees = jsonOnj.map(e => {
-                        return {
-                        key: e.id.toString(),
-                        id: e.id,
-                        name: e.name,
-                        email: e.email
-                        }
-                    })
-                    commit(SET_EMPLOYEES,employees)
-                }).catch(err => console.log(err))
-            }else{
-                console.log('Data already loaded')
+                dispatch(FORCE_FETCH_EMPLOYEES)
             }
         },
-        [ADD_EMPLOYEE]: (context,employee) => {
-            const newEmployee = {
-                id:employee.id,
-                name:employee.name,
+        [ADD_EMPLOYEE]: async ({commit},employee) => {
+            const result = await Api().post('users',{
+                name: employee.name,
                 email:employee.email
+            })
+            if(result && result.data){
+                const newUser = result.data;
+                commit(ADD_EMPLOYEE,newUser)
             }
-            context.commit(ADD_EMPLOYEE,newEmployee)
         },
-        [DEL_EMPLOYEE]: ({commit, getters},employeeId) => {
+        [DEL_EMPLOYEE]: async ({commit, getters},employeeId) => {
             const totalEmployees = getters.GET_EMPLOYEES;
-            const employeeIndex = totalEmployees.findIndex(e => e.id === employeeId);
-            if(employeeIndex != -1){
-                commit(DEL_EMPLOYEE,employeeIndex)
+            const results = await Api().delete(`users/${employeeId}`)
+            if(results && results.data){
+                const { _id } = results.data;
+                if(_id == employeeId){
+                    const isFound = totalEmployees.findIndex(e => e.key == _id)
+                    if(isFound != -1){
+                        commit(DEL_EMPLOYEE,isFound)
+                    }
+                }
             }
         },
         [EDIT_EMPLOYEE]: ({commit, getters},employee) => {
