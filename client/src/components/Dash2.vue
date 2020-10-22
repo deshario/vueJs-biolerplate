@@ -69,9 +69,7 @@
             },
             saveEditing(employee){
                 if(employee.name === '' || employee.email === '') return
-                console.log('edit employee',employee)
-                // this.$store.commit('editEmployee',employee)
-                // this.$store.dispatch(EDIT_EMPLOYEE,employee)
+                this.$store.dispatch(EDIT_EMPLOYEE,employee)
                 this.editing = null
             },
             deleteEmployee(employeeId){

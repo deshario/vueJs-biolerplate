@@ -25,7 +25,8 @@ mongoose.connection.on('error', (error) => {
 const createConnection = async () => {
   await mongoose.connect('mongodb://localhost/vue-express', {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
 }
 

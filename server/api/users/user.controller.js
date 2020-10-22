@@ -39,6 +39,19 @@ const createUser = async (request, response) => {
     response.status(200).json(savedModel)
 }
 
+const modifyUser = async (request, response) => {
+    const userId = request.params.id;
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(userId)
+    if(isValidObjectId){
+        const payload = {$set: request.body}
+        const options = {new:true} // return object after update
+        const user = await User.findByIdAndUpdate(userId,payload,options);
+        response.status(200).json(user)
+    }else{
+        response.send('Invalid User ID')
+    }
+}
+
 const deleteUser = async (request,response) => {
     const userId = request.params.id;
     const isValidObjectId = mongoose.Types.ObjectId.isValid(userId)
@@ -54,5 +67,6 @@ module.exports = {
   getUsers,
   getSingleUser,
   createUser,
+  modifyUser,
   deleteUser
 }

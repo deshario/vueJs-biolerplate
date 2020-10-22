@@ -1,5 +1,13 @@
-import {GET_EMPLOYEES, ADD_EMPLOYEE, DEL_EMPLOYEE, EDIT_EMPLOYEE, FETCH_EMPLOYEES, SET_EMPLOYEES, FORCE_FETCH_EMPLOYEES} from './type'
 import Api from '../../../services/Api'
+import {
+    GET_EMPLOYEES,
+    ADD_EMPLOYEE,
+    DEL_EMPLOYEE,
+    EDIT_EMPLOYEE,
+    FETCH_EMPLOYEES,
+    SET_EMPLOYEES,
+    FORCE_FETCH_EMPLOYEES
+} from './type'
 
 export const employee = {
     state:{
@@ -18,7 +26,7 @@ export const employee = {
         }
     },
     mutations:{
-        [SET_EMPLOYEES]: (state,dataset) => {
+        [SET_EMPLOYEES]:(state,dataset) => {
             state.employees = dataset
         },
         [ADD_EMPLOYEE]:(state,newEmployee) => {
@@ -27,13 +35,15 @@ export const employee = {
         [DEL_EMPLOYEE]:(state,employeeIndex) => {
             state.employees.splice(employeeIndex,1)
         },
-        editEmployee(state,updateEmployee){
-            const employeeIndex = state.employees.findIndex(e => e.id === updateEmployee.id);
-            if(employeeIndex != -1){
-                state.employees[employeeIndex] = updateEmployee
-                console.log('update complete');
-            }
-        },
+        [EDIT_EMPLOYEE]:(state,updateEmployee) => {
+            console.log('[EDIT_EMPLOYEE] : ',state.employees)
+            console.log('updateEmployee : ',updateEmployee)
+            // const employeeIndex = state.employees.findIndex(e => e.id === updateEmployee.id);
+            // if(employeeIndex != -1){
+            //     state.employees[employeeIndex] = updateEmployee
+            //     console.log('update complete');
+            // }
+        }
     },
     actions:{
         [FORCE_FETCH_EMPLOYEES]: async ({commit}) => {
@@ -64,6 +74,15 @@ export const employee = {
                 commit(ADD_EMPLOYEE,newUser)
             }
         },
+        [EDIT_EMPLOYEE]: async ({commit},employee) => {
+            const result = await Api().put(`users/${employee.id}`,employee)
+            if(result && result.data){
+                const { _id } = result.data;
+                if(_id == employee.id){
+                    commit(EDIT_EMPLOYEE,employee)
+                }
+            }
+        },
         [DEL_EMPLOYEE]: async ({commit, getters},employeeId) => {
             const totalEmployees = getters.GET_EMPLOYEES;
             const results = await Api().delete(`users/${employeeId}`)
@@ -76,9 +95,6 @@ export const employee = {
                     }
                 }
             }
-        },
-        [EDIT_EMPLOYEE]: ({commit, getters},employee) => {
-            console.log('Ready To Edit : ',employee)
         }
     }
 }
